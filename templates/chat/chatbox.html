@@ -10,24 +10,26 @@
     <input id="owner_username" type="hidden" value="{{ request.user.username }}">
     <div class="container">
         <div class="col-md-3">
-            <div class="user-list-div">
-                <ul>
-                    {% for dialog in object_list %}
-                        <li>
-                            {% if dialog.owner == request.user %}
-                                {% with dialog.opponent.username as username %}
-                                    <a href="{% url 'dialogs_detail' username %}" id="user-{{ username }}"
-                                       class="btn btn-danger">{% trans "Chat with" %} {{ username }}</a>
-                                {% endwith %}
-                            {% else %}
-                                {% with dialog.owner.username as username %}
-                                    <a href="{% url 'dialogs_detail' username %}" id="user-{{ username }}"
-                                       class="btn btn-danger">{% trans "Chat with" %} {{ username }}</a>
-                                {% endwith %}
-                            {% endif %}
-                        </li>
-                    {% endfor %}
-                </ul>
+            <div class="row">
+                <div class="user-list-div">
+                    
+                        {% for dialog in object_list %}
+                            <div class="user">
+                                {% if dialog.owner == request.user %}
+                                    {% with dialog.opponent.username as username %}
+                                        <a href="{% url 'dialogs_detail' username %}" id="user-{{ username }}"
+                                        class="offline"> {{ username }}</a>
+                                    {% endwith %}
+                                {% else %}
+                                    {% with dialog.owner.username as username %}
+                                        <a href="{% url 'dialogs_detail' username %}" id="user-{{ username }}"
+                                        class="offline"> {{ username }}</a>
+                                    {% endwith %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    
+                </div>
             </div>
         </div>
         <div class="col-md-9">
@@ -37,12 +39,15 @@
                         <strong>{{ opponent_username }} {% trans "is typing..." %}</strong>
                     </span>
                 </div>
-                <p>
-                    {{ opponent_username }}
-                </p>
-                <p class="text-success" id="online-status" style="display: none">{% trans "Online" %}</p>
-                <p class="text-danger" id="offline-status" style="display: none">{% trans "Offline" %}</p>
-
+                <div class="box-header">
+                    <p class="bx-name">
+                        {{ opponent_username }}
+                    </p>
+                    <div class="status">
+                        <p id="online-status" style="display: none">{% trans "Online" %}</p>
+                        <p id="offline-status" style="display: none">{% trans "Offline" %}</p>
+                    </div>
+                </div>
                 <div class="messages-container">
                     <div id="messages" class="messages" style="background-image: url({% static "images/chat-background.jpg" %})">
                        
@@ -167,9 +172,9 @@
             function setUserOnlineOffline(username, online) {
                 var elem = $("#user-" + username);
                 if (online) {
-                    elem.attr("class", "btn btn-success");
+                    elem.attr("class", "online");
                 } else {
-                    elem.attr("class", "btn btn-danger");
+                    elem.attr("class", "offline");
                 }
             }
 
@@ -192,6 +197,7 @@
 
             function setupChatWebSocket() {
                 var opponent_username = getOpponnentUsername();
+                console.log("Creating Web socket connection with " + opponent_username)
                 websocket = new WebSocket(base_ws_server_path + '{{ request.session.session_key }}/' + opponent_username);
 
                 websocket.onopen = function (event) {
@@ -330,7 +336,7 @@
                 sendMessage($chatInput.val());
                 $chatInput.val('')
             });
-
+            console.log("setting client chatwebsocket");
             setupChatWebSocket();
             scrollToLastMessage();
         });
