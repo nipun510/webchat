@@ -3,7 +3,7 @@
 {% load i18n %}
 {% block css %}
     {{ block.super }}
-    <link href="{% static "django_private_chat/css/django_private_chat.css" %}" rel="stylesheet" type="text/css" media="all">
+    <link href="{% static "chat/css/chatbox.css" %}" rel="stylesheet" type="text/css" media="all">
 {% endblock css %}
 
 {% block content %}
@@ -44,17 +44,20 @@
                 <p class="text-danger" id="offline-status" style="display: none">{% trans "Offline" %}</p>
 
                 <div class="messages-container">
-                    <div id="messages" class="messages">
+                    <div id="messages" class="messages" style="background-image: url({% static "images/chat-background.jpg" %})">
+                       
                         {% for msg in active_dialog.messages.all %}
-                            <div class="row {% if msg.read %}msg-read{% else %}msg-unread{% endif %}"
-                                 data-id="{{ msg.id }}">
-                                <p class="{% if msg.sender == request.user %}pull-left{% else %}pull-right{% endif %}">
-                                    <span class="username">{{ msg.sender.username }}:</span>
-                                    {{ msg.text }}
-                                    <span class="timestamp">&ndash; <span
-                                            data-livestamp="{{ msg.get_formatted_create_datetime }}">{{ msg.get_formatted_create_datetime }}</span></span>
-                                </p>
-                            </div>
+                        <div class="message-container">
+                                <div class="{% if msg.read %}msg-read{% else %}msg-unread{% endif %}"
+                                    data-id="{{ msg.id }}">
+                                    <p class="{% if msg.sender == request.user %}msg_right{% else %}msg_left{% endif %}">
+                                        <!--<span class="username">{{ msg.sender.username }}:</span>-->
+                                        <span class="msg-txt">{{ msg.text }}</span>
+                                        <span class="timestamp"> <span
+                                                data-livestamp="{{ msg.get_formatted_create_datetime }}">{{ msg.get_formatted_create_datetime }}</span></span>
+                                    </p>
+                                </div>
+                        </div>
                         {% endfor %}
                     </div>
                 </div>
@@ -133,18 +136,20 @@
             function addNewMessage(packet) {
                 var msg_class = "";
                 if (packet['sender_name'] == $("#owner_username").val()) {
-                    msg_class = "pull-left";
+                    msg_class = "msg_right";
                 } else {
-                    msg_class = "pull-right";
+                    msg_class = "msg_left";
                 }
                 var msgElem =
-                    $('<div class="row msg-unread" data-id="' + packet.message_id + '">' +
+                    $('<div class="message-container">' +
+                       '<div class="msg-unread" data-id="' + packet.message_id + '">' +
                         '<p class="' + msg_class + '">' +
-                        '<span class="username">' + packet['sender_name'] + ': </span>' +
+                        '<span class="msg-txt">' +
                         packet['message'] +
+                        '</span>' + 
                         ' <span class="timestamp">&ndash; <span data-livestamp="' + packet['created'] + '"> ' + packet['created'] + '</span></span> ' +
                         '</p> ' +
-                        '</div>');
+                        '</div></div>');
                 $('#messages').append(msgElem);
                 scrollToLastMessage()
             }
