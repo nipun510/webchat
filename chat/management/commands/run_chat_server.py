@@ -13,7 +13,7 @@ class Command(BaseCommand):
         asyncio.async(
             websockets.serve(
                 handlers.main_handler,
-                settings.CHAT_WS_SERVER_HOST,
+                '0.0.0.0',
                 settings.CHAT_WS_SERVER_PORT
             )
         )

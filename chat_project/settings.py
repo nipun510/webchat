@@ -25,7 +25,7 @@ SECRET_KEY = '6$&5lfw22rvuz43a)hy=io2zns$+f6@-@x-26!tg@+5ls3%wy!'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['www.nipun510.tk', ]
 
 
 # Application definition
@@ -123,6 +123,6 @@ STATICFILES_DIRS = [
 STATIC_URL = '/static/'
 
 
-CHAT_WS_SERVER_HOST = 'localhost'
+CHAT_WS_SERVER_HOST = '52.32.234.67'
 CHAT_WS_SERVER_PORT = 5002
 CHAT_WS_SERVER_PROTOCOL = 'ws'
