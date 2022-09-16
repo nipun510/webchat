@@ -1,7 +1,7 @@
 Django==1.11.3
 Flask==0.12.2
 Jinja2==2.9.6
-Mako==0.9.1
+Mako==1.2.2
 MarkupSafe==1.0
 Werkzeug==0.12.2
 chardet==2.2.1
